@@ -9,12 +9,11 @@ class ReusableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(10),
-      height: 200,
+      margin: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: colour,
         borderRadius: const BorderRadius.all(
-          Radius.circular(20),
+          Radius.circular(10),
         ),
       ),
       child: cardChild,
