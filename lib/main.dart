@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'screens/input_page.dart';
 
-void main() => runApp(const BMICalculator());
+void main() => runApp(const RandomGenerator());
 
-class BMICalculator extends StatelessWidget {
-  const BMICalculator({super.key});
+class RandomGenerator extends StatelessWidget {
+  const RandomGenerator({super.key});
 
   @override
   Widget build(BuildContext context) {

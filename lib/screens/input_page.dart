@@ -18,13 +18,30 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   Side? selectedSide;
+  List<Widget> scoreRight = [];
+  List<Widget> scoreLeft = [];
 
   int roundsNumber = 10;
   int leftDiceNumber = 0;
   int rightDiceNumber = 0;
   int? randomNumber;
+  int tapCounter = 0;
 
-  void rollDice() {
+  void resetButton() {
+    setState(() {
+      selectedSide;
+      scoreRight = [];
+      scoreLeft = [];
+
+      roundsNumber = 10;
+      leftDiceNumber = 0;
+      rightDiceNumber = 0;
+      randomNumber;
+      tapCounter = 0;
+    });
+  }
+
+  void rollDice() async {
     leftDiceNumber = Random().nextInt(100);
     rightDiceNumber = Random().nextInt(100);
     randomNumber = checkDiceNumbers(leftDiceNumber, rightDiceNumber);
@@ -33,12 +50,64 @@ class _InputPageState extends State<InputPage> {
   int? checkDiceNumbers(int leftDiceNum, int rightDiceNum) {
     if (leftDiceNum == rightDiceNum) {
       int randomNum = Random().nextInt(100);
-      print(
-          'Left and right dice numbers are the same. Random number generated: $randomNum');
+
       return randomNum;
     } else {
-      print('Left and right dice numbers are not the same.');
       return null;
+    }
+  }
+
+  void addingRight() {
+    scoreRight.add(
+      const Icon(
+        Icons.check,
+        color: Colors.green,
+      ),
+    );
+  }
+
+  void addingLeft() {
+    scoreLeft.add(
+      const Icon(
+        Icons.check,
+        color: Colors.green,
+      ),
+    );
+  }
+
+  void handleTap() {
+    if (tapCounter >= roundsNumber) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Game Over'),
+            content:
+                const Text('You have exceeded the maximum number of rounds'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  tapCounter = 0;
+                  selectedSide = null;
+                },
+                child: const Text('OK'),
+              )
+            ],
+          );
+        },
+      );
+    } else {
+      setState(() {
+        if (selectedSide == Side.right) {
+          rollDice();
+        } else if (selectedSide == Side.left) {
+          rollDice();
+        } else {
+          rollDice();
+        }
+        tapCounter++;
+      });
     }
   }
 
@@ -59,7 +128,10 @@ class _InputPageState extends State<InputPage> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
+                        handleTap();
                         selectedSide = Side.right;
+                        addingRight();
+
                         rollDice();
                       });
                     },
@@ -77,7 +149,9 @@ class _InputPageState extends State<InputPage> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
+                        handleTap();
                         selectedSide = Side.left;
+                        addingLeft();
                         rollDice();
                       });
                     },
@@ -134,7 +208,7 @@ class _InputPageState extends State<InputPage> {
                     child: Slider(
                       value: roundsNumber.toDouble(),
                       min: 5.0,
-                      max: 20.0,
+                      max: 15.0,
 
                       // activeColor: Colors.amber,
                       onChanged: (double newValue) {
@@ -163,15 +237,21 @@ class _InputPageState extends State<InputPage> {
                           'Results',
                           style: kTitleText,
                         ),
-                        Text(
+                        const Text(
                           textAlign: TextAlign.justify,
-                          'Right Greater Value : $rightDiceNumber',
+                          'Right Selected Value',
                           style: kResultText,
                         ),
-                        Text(
+                        Row(
+                          children: scoreRight,
+                        ),
+                        const Text(
                           textAlign: TextAlign.center,
-                          'Left Greater Value : $leftDiceNumber',
+                          'Left Selected Value',
                           style: kResultText,
+                        ),
+                        Row(
+                          children: scoreLeft,
                         ),
                       ],
                     ),
@@ -181,8 +261,10 @@ class _InputPageState extends State<InputPage> {
             ),
           ),
           BottomButton(
-            buttonTitle: 'CALCULATE',
-            onTap: () {},
+            buttonTitle: 'RESET',
+            onTap: () {
+              resetButton();
+            },
           )
         ],
       ),
